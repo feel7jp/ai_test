@@ -66,6 +66,20 @@ def call_gemini(message, history, model_override=None):
     return response.text or ""
 
 
+def list_gemini_models():
+    client = get_client()
+    models = []
+    for model in client.models.list():
+        name = getattr(model, "name", None)
+        if not name:
+            continue
+        # Use text-capable models (avoid embedding/image-only).
+        if "embedding" in name or "imagen" in name or "veo" in name:
+            continue
+        models.append(name)
+    return models
+
+
 def list_lmstudio_models():
     base_url = os.getenv("LMSTUDIO_BASE_URL", "http://localhost:1234/v1").rstrip("/")
     api_key = os.getenv("LMSTUDIO_API_KEY")
@@ -118,8 +132,13 @@ def index():
 def models():
     provider = get_provider(request.args or {})
     if provider == "gemini":
-        model_name = os.getenv("GEMINI_MODEL", "models/gemini-2.5-flash")
-        return jsonify({"models": [model_name]})
+        try:
+            models = list_gemini_models()
+        except Exception:  # pragma: no cover
+            models = []
+        if not models:
+            models = [os.getenv("GEMINI_MODEL", "models/gemini-2.5-flash")]
+        return jsonify({"models": models})
     if provider == "lmstudio":
         try:
             return jsonify({"models": list_lmstudio_models()})
