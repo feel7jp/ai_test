@@ -41,6 +41,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 16px;
 }
 
 .title {
@@ -53,6 +54,23 @@ body {
   color: var(--muted);
   letter-spacing: 0.08em;
   text-transform: uppercase;
+}
+
+.provider {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: var(--muted);
+  flex-wrap: wrap;
+}
+
+.provider select {
+  border-radius: 12px;
+  border: 1px solid #e1ddd6;
+  padding: 6px 10px;
+  background: #fff;
+  font-size: 14px;
 }
 
 .chat {

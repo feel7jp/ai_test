@@ -1,6 +1,8 @@
 const chatEl = document.getElementById("chat");
 const formEl = document.getElementById("chat-form");
 const messageEl = document.getElementById("message");
+const providerEl = document.getElementById("provider");
+const modelEl = document.getElementById("model");
 
 const history = [];
 
@@ -43,7 +45,12 @@ formEl.addEventListener("submit", async (event) => {
     const res = await fetch("/api/chat", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ message: text, history }),
+      body: JSON.stringify({
+        message: text,
+        history,
+        provider: providerEl ? providerEl.value : "gemini",
+        model: modelEl ? modelEl.value : "",
+      }),
     });
     const data = await res.json();
     if (!res.ok) {
@@ -64,3 +71,25 @@ messageEl.addEventListener("input", () => {
   messageEl.style.height = "auto";
   messageEl.style.height = `${messageEl.scrollHeight}px`;
 });
+
+const loadModels = async () => {
+  if (!providerEl || !modelEl) return;
+  modelEl.innerHTML = "";
+  const res = await fetch(`/api/models?provider=${providerEl.value}`);
+  const data = await res.json();
+  if (!res.ok) {
+    appendMessage("model", `モデル取得エラー: ${data.error || "Unknown error"}`);
+    return;
+  }
+  (data.models || []).forEach((name) => {
+    const option = document.createElement("option");
+    option.value = name;
+    option.textContent = name;
+    modelEl.appendChild(option);
+  });
+};
+
+if (providerEl) {
+  providerEl.addEventListener("change", loadModels);
+  loadModels();
+}

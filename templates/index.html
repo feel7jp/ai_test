@@ -9,8 +9,19 @@
   <body>
     <main class="app">
       <header class="header">
-        <div class="title">AI Chat</div>
-        <div class="subtitle">Flask + Gemini</div>
+        <div>
+          <div class="title">AI Chat</div>
+          <div class="subtitle">Flask + Gemini / LM Studio</div>
+        </div>
+        <div class="provider">
+          <label for="provider">Provider</label>
+          <select id="provider" name="provider">
+            <option value="gemini">Gemini</option>
+            <option value="lmstudio">LM Studio</option>
+          </select>
+          <label for="model">Model</label>
+          <select id="model" name="model"></select>
+        </div>
       </header>
 
       <section id="chat" class="chat" aria-live="polite"></section>
